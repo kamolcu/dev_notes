@@ -15,9 +15,9 @@ alpha_ips = ['10.229.13.56', '10.229.13.23', '10.229.13.61']
 # awsa-mpds-webfe
 alpha_frontend_ips = ['10.229.12.99']
 # Name awss-mpds-apibe,awss-mmch-apibe
-staging_ips = ['10.229.1.148', '10.229.1.33', '10.229.1.47', '10.229.1.230']
+staging_ips = ['10.229.1.148', '10.229.1.33', '10.229.1.31', '10.229.1.165']
 # awss-mpds-webfe
-staging_frontend_ips = ['10.229.0.173', '10.229.0.34']
+staging_frontend_ips = ['10.229.0.55', '10.229.0.212']
 
 version_read_command = 'cat /opt/tomcat-latest/webapps/version.txt'
 frontend_version_read_command = 'cat /data/projects/pds-backoffice/version.txt'
