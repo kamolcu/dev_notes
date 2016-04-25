@@ -51,7 +51,7 @@ class Collection(Base):
     parent_id = Column(Integer)
     pkey = Column(Integer)
     name = Column(String(200))
-    # slug = Column(String(50)) - Leave default - NULL
+    slug = Column(String(50))
     is_category = Column(mysql.ENUM('0', '1'))
     pds_collection = Column(mysql.ENUM('0', '1', '2'))  # 1 = col, 2 = cat
     created_at = Column(DateTime)
@@ -59,9 +59,9 @@ class Collection(Base):
     # deleted_at = Column(DateTime) - Leave default - NULL
 
 
-def save_col(parent_id, today, th_val):
+def save_col(parent_id, today, th_val, slug):
     col = Collection(parent_id=parent_id, pkey=gen_pkey(),
-                     name=th_val, is_category='0', pds_collection=2, created_at=today, updated_at=today)
+                     name=th_val, is_category='0', pds_collection='2', created_at=today, updated_at=today, slug=slug)
     session.add(col)
     session.commit()
     return col
@@ -90,10 +90,11 @@ def build_key(sheet, row_idx, col_idx):
 
 if __name__ == '__main__':
     # Open the workbook
-    fname = 'Category Tree Revised V.6 (15.3.16).xlsx'
+    fname = 'cat_tree.xlsx'
     xl_workbook = xlrd.open_workbook(fname)
-    th_sheet = xl_workbook.sheet_by_name('Mobile T CP')
-    en_sheet = xl_workbook.sheet_by_name('Mobile E CP')
+    th_sheet = xl_workbook.sheet_by_name('THAI')
+    en_sheet = xl_workbook.sheet_by_name('ENG')
+    slug_sheet = xl_workbook.sheet_by_name('SLUG')
     if(th_sheet.nrows != en_sheet.nrows):
         err = 'Total row count not equal Thai = %s, Eng = %s.' % (
             th_sheet.nrows, en_sheet.nrows)
@@ -106,6 +107,12 @@ if __name__ == '__main__':
     last_saved_level = 0
     for row_idx in range(1, th_sheet.nrows):
         row_counter += 1
+        slug = slug_sheet.cell(row_idx, 0).value
+        if(slug != ''):
+            slug = str(slug).strip()
+        else:
+            slug = None
+        print 'row=%s, slug=%s' % (row_counter, slug)
         for col_idx in range(0, num_cols):
             th_cell_obj = th_sheet.cell(row_idx, col_idx)
             en_cell_obj = en_sheet.cell(row_idx, col_idx)
@@ -128,11 +135,11 @@ if __name__ == '__main__':
                             parent_id = key_map[prev_doc_key]
 
                     key_list.append(doc_key)
-                    print 'parent_id=%s' % parent_id
+                    #print 'parent_id=%s' % parent_id
 
                     today = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
                     # Create collection as category
-                    col = save_col(parent_id, today, th_val)
+                    col = save_col(parent_id, today, th_val, slug)
                     # Create apps_collections
                     save_app_col_relation(col.id)
                     # Create translate
