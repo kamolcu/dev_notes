@@ -52,6 +52,10 @@ def get_children_pkeys(col_pkey):
 
     return output_list
 
+def union(a, b):
+    """ return the union of two lists """
+    return list(set(a) | set(b))
+
 if __name__ == '__main__':
 
     cols = [3215522978465, 3856986467976, 3906905110670]
@@ -67,8 +71,11 @@ if __name__ == '__main__':
         children = get_children_pkeys(col)
         target_col_list += children
 
-    new_list = existing_list + target_col_list
+    new_list = union(existing_list, target_col_list)
     target_json['discount']['following_items'] = new_list
 
     effects = json.dumps(target_json)
     print 'after = %s' % effects
+
+    promotion.effects = effects
+    session.commit()
