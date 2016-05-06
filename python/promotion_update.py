@@ -36,14 +36,14 @@ class Collection(Base):
     pds_collection = Column(mysql.ENUM('0', '1', '2'))  # 1 = col, 2 = cat
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
-    # deleted_at = Column(DateTime) - Leave default - NULL
+    deleted_at = Column(DateTime)
 
 
 def get_children_pkeys(col_pkey):
     output_list = []
     col = session.query(Collection).filter(Collection.pkey == col_pkey).first()
     children = session.query(Collection).filter(
-        Collection.parent_id == col.id).add_column(Collection.pkey)
+        Collection.parent_id == col.id, Collection.deleted_at == None).add_column(Collection.pkey)
     for child in children:
         output_list.append(child.pkey)
 
